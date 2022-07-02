@@ -1,0 +1,82 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+.window {
+    width: 1300px;
+    height: 400px;
+    position: relative;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid black;
+    overflow: hidden;
+}
+
+.scene {
+    width: inherit;
+    height: inherit;
+    position: relative;
+    /*
+    animation: scene linear;
+    animation-duration: 25s;
+    */
+}
+
+.scene .scene__floor {
+    width: 100%;
+    height: 28px;
+    background-color: rgb(138, 137, 126);
+    position: absolute;
+    bottom: 0;
+}
+
+.scene .scene__cactus span {
+    display: block;
+    width: 68.4px;
+    height: 82.8px;
+    position: absolute;
+    left: 1600px;
+    bottom: 9px;
+    background-image: url('../images/catus_sprite.png');
+    background-size: contain;
+    animation: scene linear infinite;
+    animation-duration: 5s;
+}
+
+#dino {
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+}
+
+#dino img {
+    display: none;
+    width: 110px;
+}
+
+@keyframes jump {
+    0% {
+        bottom: 0;
+    }
+
+    50% {
+        bottom: 100px;
+    }
+
+    100% {
+        bottom: 0;
+    }
+}
+
+@keyframes scene {
+    to {
+        left: -170px;
+    }
+}
