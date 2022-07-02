@@ -8,6 +8,11 @@ html, body {
     height: 100%;
 }
 
+body {
+    background: rgb(235, 241, 247);
+    transition: .3s;
+}
+
 .window {
     width: 1300px;
     height: 400px;
@@ -37,7 +42,7 @@ html, body {
     bottom: 0;
 }
 
-.scene .scene__cactus span {
+.scene .scene__cactus {
     display: block;
     width: 68.4px;
     height: 82.8px;
@@ -47,7 +52,7 @@ html, body {
     background-image: url('../images/catus_sprite.png');
     background-size: contain;
     animation: scene linear infinite;
-    animation-duration: 5s;
+    animation-duration: 4s; /* de 4s até .8s */
 }
 
 #dino {
