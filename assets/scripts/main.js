@@ -1,25 +1,24 @@
-const dino_sprite = document.getElementById('dino')
-const cactus_sprite = document.querySelector('.scene__cactus')
+const startScreen = document.querySelector('.overlay.start-screen')
+const endScreen = document.querySelector('.overlay.end-screen')
 
-const handleKeyDown = () => {
-    addEventListener('keydown', (e) => {
-        if(e.keyCode === 32 || e.keyCode === 38) {
-            dino.jump()
-        }
-    })
+const frame1 = document.querySelector('#dino img:nth-of-type(1)')
+const frame2 = document.querySelector('#dino img:nth-of-type(2)')
+
+const cactus = {
+    sprite: document.querySelector('.scene__cactus')
 }
 
 const dino = {
-    sprite: dino_sprite,
+    sprite: document.getElementById('dino'),
+
+    isWalking: false,
 
     isJumping: false,
 
     walkAnimation() {
-        const frame1 = document.querySelector('#dino img:nth-of-type(1)')
-        const frame2 = document.querySelector('#dino img:nth-of-type(2)')
         let currentFrame = 1
     
-        setInterval(() => {
+        const walkingInterval = setInterval(() => {
             if(currentFrame == 1) {
                 frame2.style.display = 'none'
                 frame1.style.display = 'block'
@@ -28,6 +27,10 @@ const dino = {
                 frame1.style.display = 'none'
                 frame2.style.display = 'block'
                 currentFrame--
+            }
+
+            if(!this.isWalking) {
+                clearInterval(walkingInterval)
             }
         }, 200)
     },
@@ -47,20 +50,56 @@ const dino = {
     handleCollision() {
         setInterval(() => {
             let dinoBottom = parseInt(window.getComputedStyle(this.sprite).getPropertyValue('bottom'))
-            let cactusLeft = parseInt(window.getComputedStyle(cactus_sprite).getPropertyValue('left'))
+            let cactusLeft = parseInt(window.getComputedStyle(cactus.sprite).getPropertyValue('left'))
         
             if(cactusLeft > 10 && cactusLeft < 90 && dinoBottom <= 70) {
-                alert('game over')
+                endGame('defeat')
             }
         }, 50)
     }
 }
 
-dino.walkAnimation()
-dino.handleCollision()
-handleKeyDown()
+const startGame = () => {
+    const handleKeyDown = () => {
+        addEventListener('keydown', (e) => {
+            if(e.keyCode === 32 || e.keyCode === 38) {
+                dino.jump()
+            }
+        })
+    }
 
-/* this.sprite.style.animationPlayState = 'paused' */
+    handleKeyDown()
 
-// se quando o cacto estiver proximo da posição left:0 o dinossauro estiver proximo da bottom:0
-// ele morre (significa que o cacto está embaixo dele)
+    dino.handleCollision()
+    dino.isWalking = true
+    dino.isJumping = false
+    dino.walkAnimation()
+
+    cactus.sprite.style.left = '1600px'
+    cactus.sprite.style.animationPlayState = 'running'
+    
+    startScreen.style.visibility = 'hidden'
+}
+
+const endGame = (endType) => {
+    if(endType == 'defeat') {
+        dino.sprite.style.filter = 'hue-rotate(200deg) saturate(300%)'
+        dino.isWalking = false
+        dino.isJumping = true
+
+        cactus.sprite.style.animationPlayState = 'paused'
+
+        endScreen.querySelector('h1').innerText = 'Game Over'
+        endScreen.style.display = 'block'
+
+        setTimeout(() => {
+            dino.sprite.style.display = 'none'
+        }, 50)
+    } else {
+        alert('won!')
+    }
+}
+
+const restartGame = () => {
+    location.href = '/'
+}
