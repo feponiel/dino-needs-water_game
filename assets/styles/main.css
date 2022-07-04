@@ -8,11 +8,6 @@ html, body {
     height: 100%;
 }
 
-body {
-    background: rgb(235, 241, 247);
-    transition: .3s;
-}
-
 .window {
     width: 1300px;
     height: 400px;
@@ -45,11 +40,45 @@ body {
     position: absolute;
     left: 1600px;
     bottom: 9px;
-    background-image: url('../images/catus_sprite.png');
+    background-image: url('../images/cactus_sprite.png');
     background-size: contain;
-    animation: scene linear infinite;
-    animation-duration: 4s; /* de 4s até .8s */
-    animation-play-state: paused;
+}
+
+.scene .scene__water-bottle {
+    display: none;
+    width: 37px;
+    height: 82px;
+    position: absolute;
+    left: 1600px;
+    bottom: 9px;
+    background-image: url('../images/water-bottle_sprite.png');
+    background-size: contain;
+}
+
+.level-counter {
+    word-spacing: -12px;
+    font-family: 'Press Start 2P';
+    color: rgb(70, 70, 70);
+}
+
+.level-counter .mini {
+    position: absolute;
+    top: 20px;
+    right: 20px;  
+    font-size: 16px;
+}
+
+.level-counter .big {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translateX(50%) translateY(-50%);
+    visibility: hidden;
+    font-size: 64px;
+}
+
+.level-counter .big.up {
+    animation: up .4s ease-out 1 forwards;
 }
 
 #dino {
@@ -64,7 +93,7 @@ body {
     width: 110px;
 }
 
-#dino img:nth-last-of-type(1) {
+#dino img:nth-of-type(1) {
     display: block;
 }
 
@@ -144,7 +173,7 @@ body {
     }
 
     50% {
-        bottom: 100px;
+        bottom: 110px;
     }
 
     100% {
@@ -155,5 +184,16 @@ body {
 @keyframes scene {
     to {
         left: -170px;
+    }
+}
+
+@keyframes up {
+    0% {
+        visibility: visible;
+        transform: translateX(50%) translateY(-10%);
+    }
+
+    100% {
+        transform: translateX(50%) translateY(-50%);
     }
 }

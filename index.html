@@ -14,11 +14,18 @@
             <div class="scene">
                 <div class="scene__floor"></div>
                 <span class="scene__cactus"></span>
+                <span class="scene__water-bottle"></span>
+            </div>
+
+            <div class="level-counter">
+                <p class="mini">Level <span>1</span></p>
+                <p class="big">Level UP!</p>
             </div>
 
             <div id="dino">
                 <img src="./assets/images/dino_sprite-1.png" alt="dino" />
                 <img src="./assets/images/dino_sprite-2.png" alt="dino" />
+                <img src="./assets/images/dino_sprite-3.png" alt="dino" />
             </div>
 
             <div class="overlay start-screen">
@@ -29,7 +36,7 @@
                         <span>Water</span>
                     </h1>
 
-                    <button type="button" onclick="startGame()">Start</button>
+                    <button type="button" onclick="start()">Start</button>
                 </div>
             </div>
 
@@ -37,9 +44,29 @@
                 <div class="content">
                     <h1>End Type</h1>
 
-                    <button type="button" onclick="restartGame()">Play Again</button>
+                    <button type="button" onclick="start()">Play Again</button>
                 </div>
             </div>
         </div>
+
+        <audio id="press-sound">
+            <source src="./assets/audios/press.mp3" type="audio/mp3" />
+        </audio>
+
+        <audio id="jump-sound">
+            <source src="./assets/audios/jump.mp3" type="audio/mp3" />
+        </audio>
+
+        <audio id="level-sound">
+            <source src="./assets/audios/level.mp3" type="audio/mp3" />
+        </audio>
+
+        <audio id="damage-sound">
+            <source src="./assets/audios/damage.mp3" type="audio/mp3" />
+        </audio>
+
+        <audio id="win-sound">
+            <source src="./assets/audios/win.mp3" type="audio/mp3" />
+        </audio>
     </body>
 </html>
