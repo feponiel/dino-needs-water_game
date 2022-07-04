@@ -133,6 +133,10 @@ html, body {
     cursor: pointer;
 }
 
+.overlay .content button:active {
+    transform: translateY(2px);
+}
+
 .overlay.start-screen .content h1 span:nth-of-type(1) {
     font-family: 'Rubik Moonrocks';
     color: rgb(23, 208, 148);
