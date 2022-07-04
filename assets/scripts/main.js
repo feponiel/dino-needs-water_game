@@ -20,6 +20,7 @@ const start = () => {
         levelSound.play()
 
         bigLevelCounter.classList.add('up')
+
         setTimeout(() => {
             bigLevelCounter.classList.remove('up')
         }, 400)
@@ -40,14 +41,14 @@ const start = () => {
     const endGame = (endType) => {
         isGameOver = true
 
-        dino.isJumping = true
-
         clearInterval(handleLevelUp)
 
         if(endType == 'defeat') {
             dino.sprite.style.filter = 'hue-rotate(200deg) saturate(300%)'
             dino.isWalking = false
+
             cactus.sprite.style.animationPlayState = 'paused'
+
             waterBottle.sprite.style.animationPlayState = 'paused'
     
             endScreen.querySelector('h1').innerText = 'Game Over'
@@ -94,8 +95,6 @@ const start = () => {
     
         isJumping: false,
     
-        isCollide: false,
-    
         walkAnimation() {
             let currentFrame = 1
         
@@ -117,17 +116,18 @@ const start = () => {
         },
     
         jump() {
-            if(!this.isJumping) {
-                this.isJumping = true
-                this.sprite.style.animation = 'jump .8s ease-in-out'
-                jumpSound.play()
-    
-                setTimeout(() => {
-                    if(!isGameOver) {
+            if(!isGameOver) {
+                if(!this.isJumping) {
+                    this.isJumping = true
+                    this.sprite.style.animation = 'jump .8s ease-in-out'
+                    
+                    jumpSound.play()
+        
+                    setTimeout(() => {
                         this.isJumping = false
                         this.sprite.style.animation = ''
-                    }
-                }, 800)
+                    }, 800)
+                }
             }
         },
     
@@ -144,9 +144,9 @@ const start = () => {
                 }
 
                 if(waterBottleLeft > 10 && waterBottleLeft < 90 && dinoBottom <= 70) {
-                    winSound.play()
                     clearInterval(checkIsCollideInterval)
                     waterBottle.sprite.style.animationPlayState = 'paused'
+                    winSound.play()
                 }
             }, 50)
         }
@@ -171,13 +171,17 @@ const start = () => {
     levelCounter.innerText = level
 
     frame3.style.display = 'none'
+
     dino.sprite.style.filter = 'none'
     dino.handleCollision()
+    dino.sprite.style.animation = ''
     dino.isWalking = true
     dino.isJumping = false
     dino.walkAnimation()
+
     cactus.sprite.style.display = 'block'
     cactus.sprite.style.animation = 'none'
+
     waterBottle.sprite.style.animation = 'none'
 
     pressSound.play()
