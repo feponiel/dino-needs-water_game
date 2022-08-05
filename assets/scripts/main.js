@@ -166,7 +166,8 @@ const start = () => {
         })
     }
 
-    const initializeSprites = setTimeout(() => {
+    // Initializing sprites
+    setTimeout(() => {
         dino.sprite.style.display = 'block'
         cactus.sprite.style.animation = 'scene 4s linear infinite'
     }, 50)
