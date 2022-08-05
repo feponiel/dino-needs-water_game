@@ -165,6 +165,11 @@ const start = () => {
             }
         })
     }
+
+    const initializeSprites = setTimeout(() => {
+        dino.sprite.style.display = 'block'
+        cactus.sprite.style.animation = 'scene 4s linear infinite'
+    }, 50)
     
     let isGameOver = false
     let level = 1
