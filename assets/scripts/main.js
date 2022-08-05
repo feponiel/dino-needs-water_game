@@ -158,12 +158,13 @@ const start = () => {
                 dino.jump()
             }
         })
-    }
 
-    const initializeSprites = setTimeout(() => {
-        dino.sprite.style.display = 'block'
-        cactus.sprite.style.animation = 'scene 4s linear infinite'
-    }, 50)
+        document.querySelector('body').addEventListener('touchstart', () => {
+            if(isGameOver == false) {
+                dino.jump()
+            }
+        })
+    }
     
     let isGameOver = false
     let level = 1
