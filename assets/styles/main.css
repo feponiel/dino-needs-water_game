@@ -38,13 +38,16 @@ html, body {
     bottom: 0;
 }
 
-.scene .scene__cactus {
-    display: block;
-    width: 6.84rem;
-    height: 8.28rem;
+.scene .scene__obstacle {
     position: absolute;
     left: 160rem;
     bottom: .9rem;
+}
+
+.scene .scene__cactus {
+    display: none;
+    width: 6.84rem;
+    height: 8.28rem;
     background-image: url('../images/cactus_sprite.png');
     background-size: contain;
 }
@@ -53,11 +56,14 @@ html, body {
     display: none;
     width: 3.7rem;
     height: 8.2rem;
-    position: absolute;
-    left: 160rem;
-    bottom: .9rem;
+    
     background-image: url('../images/water-bottle_sprite.png');
     background-size: contain;
+}
+
+.scene .scene__obstacle.scene__obstacle--cactus [data-obstacle="cactus"],
+.scene .scene__obstacle.scene__obstacle--water-bottle [data-obstacle="water-bottle"] {
+    display: block;
 }
 
 .level-counter {
@@ -95,12 +101,31 @@ html, body {
     animation-play-state: running;
 }
 
+#dino.jump {
+    animation: jump .8s ease-in-out;
+}
+
+#dino.hit {
+    filter: hue-rotate(200deg) saturate(300%);
+}
+
 #dino img {
     display: none;
     width: 11rem;
 }
 
-#dino img:nth-of-type(1) {
+#dino.frame1 img:nth-of-type(1),
+#dino.frame2 img:nth-of-type(2),
+#dino.frame3 img:nth-of-type(3) {
+    display: block;
+}
+
+#screen > * {
+    display: none;
+}
+
+#screen.screen--start .screen__start-screen,
+#screen.screen--end .screen__end-screen {
     display: block;
 }
 
@@ -144,36 +169,36 @@ html, body {
     transform: translateY(2px);
 }
 
-.overlay.start-screen .content h1 span:nth-of-type(1) {
+.overlay.screen__start-screen .content h1 span:nth-of-type(1) {
     font-family: 'Rubik Moonrocks';
     color: rgb(23, 208, 148);
 }
 
-.overlay.start-screen .content h1 span:nth-of-type(2) {
+.overlay.screen__start-screen .content h1 span:nth-of-type(2) {
     font-family: 'Bungee';
     color: white;
 }
 
-.overlay.start-screen .content h1 span:nth-of-type(3) {
+.overlay.screen__start-screen .content h1 span:nth-of-type(3) {
     font-family: 'Bungee';
     color: rgb(103, 113, 255);
 }
 
-.overlay.end-screen {
+.overlay.screen__end-screen {
     display: none;
 }
 
-.overlay.end-screen .content {
+.overlay.screen__end-screen .content {
     margin-top: 7.3rem;
 }
 
-.overlay.end-screen .content h1 {
+.overlay.screen__end-screen .content h1 {
     word-spacing: -2.2rem;
     font-family: 'Press Start 2P';
     color: white;
 }
 
-.overlay.end-screen .content button {
+.overlay.screen__end-screen .content button {
     margin-top: 6.4rem;
     background: rgb(103, 113, 255);
 }
@@ -192,7 +217,7 @@ html, body {
     }
 }
 
-@keyframes scene {
+@keyframes move {
     to {
         left: -17rem;
     }

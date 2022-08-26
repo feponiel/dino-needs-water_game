@@ -1,12 +1,5 @@
-const startScreen = document.querySelector('.overlay.start-screen')
-const endScreen = document.querySelector('.overlay.end-screen')
-
-const levelCounter = document.querySelector('.level-counter span')
-const bigLevelCounter = document.querySelector('.level-counter .big')
-
-const frame1 = document.querySelector('#dino img:nth-of-type(1)')
-const frame2 = document.querySelector('#dino img:nth-of-type(2)')
-const frame3 = document.querySelector('#dino img:nth-of-type(3)')
+const gameScreen = document.getElementById('screen')
+const levelCounter = document.querySelector('.level-counter')
 
 const pressSound = document.getElementById('press-sound')
 const jumpSound = document.getElementById('jump-sound')
@@ -14,187 +7,193 @@ const levelSound = document.getElementById('level-sound')
 const damageSound = document.getElementById('damage-sound')
 const winSound = document.getElementById('win-sound')
 
-const start = () => {
-    const handleLevelUp = setInterval(() => {
-        level++
-        levelSound.play()
+class Game {
+    constructor(screen, levelCounter) {
+        this.isGameOver = false
+        this.level = 3
 
-        bigLevelCounter.classList.add('up')
+        this.screen = screen
+        this.miniLevelCounter = levelCounter.querySelector('.mini span')
+        this.bigLevelCounter = levelCounter.querySelector('.big')
+    }
 
-        setTimeout(() => {
-            bigLevelCounter.classList.remove('up')
-        }, 400)
+    setScreenTitle(title) {
+        this.screen.querySelector('.screen__end-screen .content h1').innerText = title
+    }
+
+    start() {
+        pressSound.play()
+
+        this.isGameOver = false
+        this.level = 1
+        this.miniLevelCounter.innerText = this.level
+
+        this.screen.removeAttribute('class')
         
-        levelCounter.innerText = level
+        dino.sprite.setAttribute('class', 'frame1')
+        dino.sprite.style.display = 'block'
+        
+        obstacle.sprite.classList.replace('scene__obstacle--water-bottle', 'scene__obstacle--cactus')
+    }
 
-        if(level == 2) {
-            cactus.sprite.style.animation = 'none'
-            cactus.sprite.style.animation = 'scene 2s linear infinite'
-        } else if(level == 3) {
-            cactus.sprite.style.animation = 'none'
-            cactus.sprite.style.animation = 'scene 1s linear infinite'
-        } else {
-            endGame('win')
+    end() {
+        this.isGameOver = true
+        dino.isWalking = false
+        dino.isJumping = false
+
+        obstacle.sprite.style.animationPlayState = 'paused'
+
+        const obstacleType = obstacle.sprite.classList[1]
+
+        switch(obstacleType) {
+            case 'scene__obstacle--cactus':
+                damageSound.play()
+
+                dino.sprite.classList.add('hit')
+
+                setTimeout(() => {
+                    dino.sprite.classList.remove('hit')
+                    dino.sprite.style.display = 'none'
+                }, 50)
+
+                setTimeout(() => obstacle.sprite.style.animation = 'none', 1000)
+
+                this.setScreenTitle('Game Over')
+
+                break
+            case 'scene__obstacle--water-bottle':
+                winSound.play()
+
+                obstacle.sprite.style.animation = 'none'
+
+                dino.sprite.setAttribute('class', 'frame3')
+
+                setTimeout(() => dino.sprite.style.display = 'none', 1000)
+
+                this.setScreenTitle('Won!')
+        }
+
+        setTimeout(() => this.screen.classList.add('screen--end'), 1000)
+    }
+}
+
+class Dino {
+    constructor() {
+        this.sprite = document.getElementById('dino')
+        this.isWalking = false
+        this.isJumping = false
+    }
+
+    walk() {
+        this.isWalking = true
+        let currentFrame = 1
+        
+        const walkingInterval = setInterval(() => {
+            if(currentFrame == 1) {
+                this.sprite.classList.replace('frame1', 'frame2')
+                currentFrame++
+            } else {
+                this.sprite.classList.replace('frame2', 'frame1')
+                currentFrame--
+            }
+
+            if(!this.isWalking) {
+                clearInterval(walkingInterval)
+            }
+        }, 200)
+    }
+
+    jump() {
+        if(!game.isGameOver) {
+            if(!this.isJumping) {
+                jumpSound.play()
+                this.isJumping = true
+                this.sprite.classList.add('jump')
+    
+                setTimeout(() => {
+                    this.isJumping = false
+                    this.sprite.classList.remove('jump')
+                }, 800)
+            }
+        }
+    }
+}
+
+class Obstacle {
+    constructor() {
+        this.sprite = document.querySelector('.scene__obstacle')
+    }
+
+    move() {
+        this.sprite.style.animation = 'move 4s linear infinite'
+    }
+}
+
+const start = () => {
+    game.start()
+    dino.walk()
+    obstacle.move()
+
+    handleJump()
+    handleCollision()
+    handleLevelUp()
+}
+
+const handleJump = () => {
+    addEventListener('keydown', e => {
+        if(e.keyCode === 32 || e.keyCode === 38) {
+            dino.jump()
+        }
+    })
+
+    document.querySelector('body').addEventListener('touchstart', () => dino.jump())
+}
+
+const handleCollision = () => {
+    const checkIsCollideInterval = setInterval(() => {
+        let dinoBottom = parseInt(window.getComputedStyle(dino.sprite).getPropertyValue('bottom'))
+        let obstacleLeft = parseInt(window.getComputedStyle(obstacle.sprite).getPropertyValue('left'))
+        
+        if(obstacleLeft > 10 && obstacleLeft < 90 && dinoBottom <= 70) {
+            clearInterval(checkIsCollideInterval)
+            game.end()
+        }
+    }, 50)
+}
+
+const handleLevelUp = () => {
+    const levelUp = setInterval(() => {
+        levelSound.play()
+        game.level++
+
+        game.bigLevelCounter.classList.add('up')
+        setTimeout(() => game.bigLevelCounter.classList.remove('up'), 400)
+        
+        game.miniLevelCounter.innerText = game.level
+
+        switch(game.level) {
+            case 2:
+                obstacle.sprite.style.animationDuration = '2s'
+                break
+            case 3:
+                obstacle.sprite.style.animationDuration = '1s'
+                break
+            case 4:
+                obstacle.sprite.classList.replace('scene__obstacle--cactus', 'scene__obstacle--water-bottle')
+                
+                obstacle.sprite.style.animation = 'none'
+                setTimeout(() => obstacle.sprite.style.animation = 'move 4s 4s linear 1', 400)
         }
     }, 32000)
 
-    const endGame = (endType) => {
-        isGameOver = true
-
-        clearInterval(handleLevelUp)
-
-        if(endType == 'defeat') {
-            dino.sprite.style.filter = 'hue-rotate(200deg) saturate(300%)'
-            dino.isWalking = false
-
-            cactus.sprite.style.animationPlayState = 'paused'
-
-            waterBottle.sprite.style.animationPlayState = 'paused'
-    
-            endScreen.querySelector('h1').innerText = 'Game Over'
-            endScreen.style.display = 'block'
-    
-            setTimeout(() => {
-                dino.sprite.style.display = 'none'
-            }, 50)
-        } else {
-            cactus.sprite.style.display = 'none'
-
-            waterBottle.sprite.style.display = 'block'
-            waterBottle.sprite.style.animation = 'scene 2s 3s linear 1'
-
-            endScreen.querySelector('h1').innerText = 'Won!'
-
-            setTimeout(() => {
-                endScreen.style.display = 'block'
-
-                waterBottle.sprite.style.display = 'none'
-
-                dino.isWalking = false
-    
-                setTimeout(() => {
-                    frame1.style.display = 'none'
-                    frame3.style.display = 'block'
-                }, 200)
-            }, 4800)
+    const checkIsGameOver = setInterval(() => {
+        if(game.isGameOver) {
+            clearInterval(levelUp)
+            clearInterval(checkIsGameOver)
         }
-    }
-
-    const cactus = {
-        sprite: document.querySelector('.scene__cactus')
-    }
-
-    const waterBottle = {
-        sprite: document.querySelector('.scene__water-bottle')
-    }
-    
-    const dino = {
-        sprite: document.getElementById('dino'),
-    
-        isWalking: false,
-    
-        isJumping: false,
-    
-        walkAnimation() {
-            let currentFrame = 1
-        
-            const walkingInterval = setInterval(() => {
-                if(currentFrame == 1) {
-                    frame2.style.display = 'none'
-                    frame1.style.display = 'block'
-                    currentFrame++
-                } else {
-                    frame1.style.display = 'none'
-                    frame2.style.display = 'block'
-                    currentFrame--
-                }
-    
-                if(!this.isWalking) {
-                    clearInterval(walkingInterval)
-                }
-            }, 200)
-        },
-    
-        jump() {
-            if(!isGameOver) {
-                if(!this.isJumping) {
-                    this.isJumping = true
-                    this.sprite.style.animation = 'jump .8s ease-in-out'
-                    
-                    jumpSound.play()
-        
-                    setTimeout(() => {
-                        this.isJumping = false
-                        this.sprite.style.animation = ''
-                    }, 800)
-                }
-            }
-        },
-    
-        handleCollision() {
-            const checkIsCollideInterval = setInterval(() => {
-                let dinoBottom = parseInt(window.getComputedStyle(this.sprite).getPropertyValue('bottom'))
-                let cactusLeft = parseInt(window.getComputedStyle(cactus.sprite).getPropertyValue('left'))
-                let waterBottleLeft = parseInt(window.getComputedStyle(waterBottle.sprite).getPropertyValue('left'))
-                
-                if(cactusLeft > 10 && cactusLeft < 90 && dinoBottom <= 70) {
-                    damageSound.play()
-                    clearInterval(checkIsCollideInterval)
-                    endGame('defeat')
-                }
-
-                if(waterBottleLeft > 10 && waterBottleLeft < 90 && dinoBottom <= 70) {
-                    clearInterval(checkIsCollideInterval)
-                    waterBottle.sprite.style.animationPlayState = 'paused'
-                    winSound.play()
-                }
-            }, 50)
-        }
-    }
-    
-    const handleKeyDown = () => {
-        addEventListener('keydown', (e) => {
-            if(e.keyCode === 32 || e.keyCode === 38) {
-                dino.jump()
-            }
-        })
-
-        document.querySelector('body').addEventListener('touchstart', () => {
-            if(isGameOver == false) {
-                dino.jump()
-            }
-        })
-    }
-
-    // Initializing sprites
-    setTimeout(() => {
-        dino.sprite.style.display = 'block'
-        cactus.sprite.style.animation = 'scene 4s linear infinite'
     }, 50)
-    
-    let isGameOver = false
-    let level = 1
-    
-    levelCounter.innerText = level
-
-    frame3.style.display = 'none'
-
-    dino.sprite.style.filter = 'none'
-    dino.handleCollision()
-    dino.sprite.style.animation = ''
-    dino.isWalking = true
-    dino.isJumping = false
-    dino.walkAnimation()
-
-    cactus.sprite.style.display = 'block'
-    cactus.sprite.style.animation = 'none'
-
-    waterBottle.sprite.style.animation = 'none'
-
-    pressSound.play()
-
-    startScreen.style.display = 'none'
-    endScreen.style.display = 'none'
-
-    handleKeyDown()
 }
+
+const game = new Game(gameScreen, levelCounter)
+const dino = new Dino()
+const obstacle = new Obstacle()
