@@ -104,7 +104,7 @@ class Dino {
     }
 
     jump() {
-        if(!game.isGameOver) {
+        if(!game.isGameOver && dino.isJumping != null) {
             if(!this.isJumping) {
                 jumpSound.play()
                 this.isJumping = true
@@ -179,6 +179,8 @@ const handleLevelUp = () => {
                 obstacle.sprite.style.animationDuration = '1s'
                 break
             case 4:
+                dino.isJumping = null
+
                 obstacle.sprite.classList.replace('scene__obstacle--cactus', 'scene__obstacle--water-bottle')
                 
                 obstacle.sprite.style.animation = 'none'
